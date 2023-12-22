@@ -5,6 +5,7 @@ import LayoutApp from "./pages/LayoutApp";
 import { ConfigProvider, theme } from "antd";
 import FormSample from "./pages/Sample";
 import Auth from "./pages/authentication/Auth";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const token = localStorage.getItem("accessToken");
@@ -26,8 +27,8 @@ function App() {
       >
         <LayoutApp>
           <Routes>
-            <Route path="/" element={<FormSample />} />
-            <Route path="/dashboard" element={<FormSample />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </LayoutApp>
       </ConfigProvider>

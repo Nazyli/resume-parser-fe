@@ -27,7 +27,7 @@ export async function FetchData(url, method, data = null) {
         },
         status: 500,
       };
-    } else if (error.response.status == 401) {
+    } else if (error.response.status === 401) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("userData");
       window.location.href = "/";
@@ -40,4 +40,5 @@ export const ENDPOINTS = {
   LOGIN: `${BASE_URL}/rest/auth/login`,
   REGISTER: `${BASE_URL}/rest/auth/signup`,
   GET_USER_BY_ID: `${BASE_URL}/rest/users/me`,
+  UPLOAD_CV: `${BASE_URL}/rest/resume/extract`,
 };
