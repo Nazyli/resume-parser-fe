@@ -126,38 +126,38 @@ export default function Dashboard() {
     <>
       {contextHolder}
       <div style={{ display: "flex", overflowX: "auto", padding: "8px" }}>
-        {loadingFetchData
-          ? Array.from({ length: 10 }).map((_, index) => (
-              <Col key={index} span={5} style={{ padding: "10px" }}>
-                <Skeleton active />
-              </Col>
-            ))
-          : listData.map((resume, index) => (
-              <Col key={index} span={5} style={{ padding: "10px" }}>
-                <Alert
-                  message={
-                    <Link
-                      onClick={() => {
-                        fetchDetailData(resume.id);
-                      }}
-                    >
-                      {resume.fileName}
-                    </Link>
-                  }
-                  type="info"
-                />
-              </Col>
+        {loadingFetchData ? (
+          <Skeleton active paragraph={{ rows: 2 }} />
+        ) : (
+          <Space>
+            {listData.map((resume, index) => (
+              <Alert
+                style={{ width: "200px" }}
+                key={index}
+                message={
+                  <Link
+                    onClick={() => {
+                      fetchDetailData(resume.id);
+                    }}
+                  >
+                    {resume.fileName}
+                  </Link>
+                }
+                type="info"
+              />
             ))}
+          </Space>
+        )}
       </div>
 
       <Row justify="center" style={{ marginTop: "30px", marginBottom: "30px" }}>
         <Col>
-          <Space direction="vertical" style={{ width: "400px" }}>
+          <Space direction="vertical" style={{ width: "300px" }}>
             <Upload {...propsUpload}>
               <Button
                 type="primary"
                 icon={<UploadOutlined />}
-                style={{ width: "400px" }}
+                style={{ width: "300px" }}
               >
                 Upload CV LinkedIn
               </Button>
