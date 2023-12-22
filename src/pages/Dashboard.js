@@ -5,36 +5,23 @@ import {
   Row,
   Space,
   Upload,
-  List,
   message,
-  Carousel,
   Alert,
   Skeleton,
+  ConfigProvider,
 } from "antd";
 import {
   ClearOutlined,
   UploadOutlined,
   DownloadOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 import { blue, red } from "@ant-design/colors";
 import { useEffect, useState } from "react";
 import { ENDPOINTS, FetchData } from "../utils/endpoints";
 import { Link } from "react-router-dom";
+import { CopyBlock, github } from "react-code-blocks";
 
-const listData = [
-  { title: "Card 1", content: "Content of Card 1" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-  { title: "Card 2", content: "Content of Card 2" },
-];
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const [fileList, setFileList] = useState([]);
@@ -42,6 +29,7 @@ export default function Dashboard() {
   const [loadingFetchData, setLoadingFetchData] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataJSON, setDataJSON] = useState();
+  const [urlPDF, setUrlPDF] = useState();
 
   useEffect(() => {
     fetchData();
@@ -81,8 +69,11 @@ export default function Dashboard() {
       const res = await FetchData(ENDPOINTS.UPLOAD_CV, "POST", formData);
       setDataJSON(res.result);
       messageApi.success("Upload file berhasil");
+      const url = URL.createObjectURL(fileList[0].originFileObj);
+      setUrlPDF(url);
       onSuccess();
     } catch (error) {
+      console.log(error);
       onError();
       if (error.response && error.response.data && error.response.data.error) {
         messageApi.error(error.response.data.error[0]);
@@ -122,6 +113,10 @@ export default function Dashboard() {
     onPreview: onPreview,
   };
 
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(dataJSON);
+    messageApi.success("Code copied to clipboard");
+  };
   return (
     <>
       {contextHolder}
@@ -172,7 +167,41 @@ export default function Dashboard() {
         </Col>
       </Row>
 
-      <Row>{JSON.stringify(dataJSON)}</Row>
+      {/* <Row>{JSON.stringify(dataJSON)}</Row> */}
+      <Row gutter={16}>
+        <Col span={12}>
+          {urlPDF ? (
+            <iframe
+              title="PDF Viewer"
+              src={urlPDF}
+              width="100%"
+              height="700px"
+              style={{ border: "none" }}
+            />
+          ) : null}
+        </Col>
+        <Col span={12}>
+          <div style={{ maxHeight: "700px", overflowY: "auto" }}>
+            <CopyBlock
+              height="700px"
+              text={JSON.stringify(dataJSON, null, 10)}
+              language="json"
+              showLineNumbers={true}
+              wrapLines={true}
+              codeBlock
+              theme={github}
+              customStyle={{ fontSize: "14px" }}
+              icon={<CopyOutlined />}
+              onCopy={() => {
+                navigator.clipboard.writeText(
+                  JSON.stringify(dataJSON, null, 10)
+                );
+                message.success("Code copied to clipboard");
+              }}
+            />
+          </div>
+        </Col>
+      </Row>
     </>
   );
 }

@@ -17,13 +17,13 @@ function App() {
   return (
     <div>
       <ConfigProvider
-        theme={{
-          // algorithm: theme.darkAlgorithm,
-          algorithm: theme.defaultAlgorithm,
-          token: {
-            // colorPrimary: '#00b96b'
-          },
-        }}
+      // theme={{
+      // algorithm: theme.darkAlgorithm,
+      // algorithm: theme.defaultAlgorithm,
+      // token: {
+      // colorPrimary: '#00b96b'
+      // },
+      // }}
       >
         <LayoutApp>
           <Routes>
