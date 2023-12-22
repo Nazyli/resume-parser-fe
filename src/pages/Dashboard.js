@@ -38,11 +38,11 @@ export default function Dashboard() {
   const [fileList, setFileList] = useState([]);
   const [listData, setListData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dataJSON, setDataJSON] = useState();
 
   useEffect(() => {
-    // Fetch data from the API
     fetchData();
-  }, []);
+  }, [dataJSON]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -50,26 +50,33 @@ export default function Dashboard() {
       const res = await FetchData(ENDPOINTS.GET_ALL_TRANS, "GET");
       setListData(res.result);
     } catch (error) {
-      console.log(error);
-      if (error.response && error.response.data && error.response.data.error) {
-        messageApi.error(error.response.data.error[0]);
-      } else {
-        messageApi.error(error.response.data.message);
-      }
+      messageApi.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchDetailData = async (id) => {
+    setLoading(true);
+    try {
+      const res = await FetchData(ENDPOINTS.GET_DETAIL_TRANS(id), "GET");
+      setDataJSON(res.result);
+    } catch (error) {
+      messageApi.error(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
 
-  const customRequest = async ({ file, onSuccess, onError }) => {
+  const uploadFile = async ({ file, onSuccess, onError }) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      await FetchData(ENDPOINTS.UPLOAD_CV, "POST", formData);
+      const res = await FetchData(ENDPOINTS.UPLOAD_CV, "POST", formData);
+      setDataJSON(res.result);
       messageApi.success("Upload file berhasil");
       onSuccess();
     } catch (error) {
@@ -77,7 +84,7 @@ export default function Dashboard() {
       if (error.response && error.response.data && error.response.data.error) {
         messageApi.error(error.response.data.error[0]);
       } else {
-        messageApi.error(error.message || "Upload failed");
+        messageApi.error(error.response.data.message || "Upload failed");
       }
     }
   };
@@ -89,7 +96,7 @@ export default function Dashboard() {
 
   const propsUpload = {
     onChange: onChange,
-    customRequest: customRequest,
+    customRequest: uploadFile,
     fileList: fileList,
     listType: "picture",
     maxCount: 1,
@@ -118,7 +125,18 @@ export default function Dashboard() {
       <div style={{ display: "flex", overflowX: "auto", padding: "8px" }}>
         {listData.map((resume, index) => (
           <Col key={index} span={5} style={{ padding: "10px" }}>
-            <Alert message={<a href={""}>{resume.fileName}</a>} type="info" />
+            <Alert
+              message={
+                <a
+                  onClick={() => {
+                    fetchDetailData(resume.id);
+                  }}
+                >
+                  {resume.fileName}
+                </a>
+              }
+              type="info"
+            />
           </Col>
         ))}
       </div>
@@ -144,6 +162,7 @@ export default function Dashboard() {
           </Space>
         </Col>
       </Row>
+      <Row>{JSON.stringify(dataJSON)}</Row>
     </>
   );
 }

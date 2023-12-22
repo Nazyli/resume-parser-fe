@@ -42,4 +42,5 @@ export const ENDPOINTS = {
   GET_USER_BY_ID: `${BASE_URL}/rest/users/me`,
   UPLOAD_CV: `${BASE_URL}/rest/resume/extract`,
   GET_ALL_TRANS: `${BASE_URL}/rest/history/resume/find-all`,
+  GET_DETAIL_TRANS: (id) => `${BASE_URL}/rest/history/resume/find/${id}`,
 };
