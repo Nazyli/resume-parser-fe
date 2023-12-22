@@ -46,7 +46,11 @@ function LoginForm() {
         });
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        messageApi.error(error.response.data.error[0]);
+        if (error.response.data.error === "object") {
+          messageApi.error(error.response.data.error[0]);
+        } else {
+          messageApi.error(error.response.data.message);
+        }
       } else {
         messageApi.error(error.response.data.message);
       }

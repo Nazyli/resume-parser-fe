@@ -132,6 +132,7 @@ export default function Dashboard() {
           <Space>
             {listData.map((resume, index) => (
               <Alert
+                type="warning"
                 style={{ width: "200px" }}
                 key={index}
                 message={
@@ -143,7 +144,6 @@ export default function Dashboard() {
                     {resume.fileName}
                   </Link>
                 }
-                type="info"
               />
             ))}
           </Space>

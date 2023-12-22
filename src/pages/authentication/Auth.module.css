@@ -4,7 +4,8 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(to bottom, #87CEEB, #00BFFF);
+    background: linear-gradient(to bottom, #FF8473, #FF6347);
+
   } 
 
   .card {

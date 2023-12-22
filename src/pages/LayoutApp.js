@@ -48,10 +48,10 @@ export default function LayoutApp({ children }) {
             }}
           >
             <Title
-              level={5}
+              level={4}
               style={{
+                color: "#FF6347",
                 margin: "16px 0",
-                color: grey[5],
                 fontWeight: "bolder",
                 marginLeft: "20px",
               }}
@@ -86,10 +86,10 @@ export default function LayoutApp({ children }) {
           }}
         >
           <Title
-            level={3}
+            level={5}
             style={{
               margin: "16px 0",
-              color: blue[5],
+              color: grey[5],
             }}
           >
             For Test: Resume Parser Services
@@ -106,7 +106,7 @@ export default function LayoutApp({ children }) {
           </div>
         </Content>
 
-        <Footer style={{ textAlign: "center" }}>Absensi Maritim ©2023</Footer>
+        <Footer style={{ textAlign: "center" }}>Resume Parser ©2023</Footer>
       </Layout>
     </Layout>
   );
