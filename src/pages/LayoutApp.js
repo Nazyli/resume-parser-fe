@@ -1,6 +1,6 @@
 import React from "react";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
-import { blue } from "@ant-design/colors";
+import { blue, grey } from "@ant-design/colors";
 import { Layout, Menu, Avatar, Popover, theme } from "antd";
 import { Typography } from "antd";
 const { Header, Content, Footer } = Layout;
@@ -47,7 +47,17 @@ export default function LayoutApp({ children }) {
               paddingRight: "16px",
             }}
           >
-            <div className="demo-logo" />
+            <Title
+              level={5}
+              style={{
+                margin: "16px 0",
+                color: grey[5],
+                fontWeight: "bolder",
+                marginLeft: "20px",
+              }}
+            >
+              Resume Parser
+            </Title>
             <Popover content={content} placement="bottomRight" trigger="hover">
               <div
                 style={{
@@ -82,7 +92,7 @@ export default function LayoutApp({ children }) {
               color: blue[5],
             }}
           >
-            For Test Resume Parser
+            For Test: Resume Parser Services
           </Title>
           <div
             style={{

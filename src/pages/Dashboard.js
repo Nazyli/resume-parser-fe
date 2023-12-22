@@ -28,7 +28,9 @@ export default function Dashboard() {
   const [listData, setListData] = useState([]);
   const [loadingFetchData, setLoadingFetchData] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
   const [dataJSON, setDataJSON] = useState();
+  const [dataJSONDetail, setDataJSONDetail] = useState();
   const [urlPDF, setUrlPDF] = useState();
 
   useEffect(() => {
@@ -51,7 +53,9 @@ export default function Dashboard() {
     setLoading(true);
     try {
       const res = await FetchData(ENDPOINTS.GET_DETAIL_TRANS(id), "GET");
-      setDataJSON(res.result);
+      setDataJSONDetail(res.result);
+      setDataJSON(null);
+      setUrlPDF(null);
     } catch (error) {
       messageApi.error(error.response.data.message);
     } finally {
@@ -63,15 +67,18 @@ export default function Dashboard() {
   };
 
   const uploadFile = async ({ file, onSuccess, onError }) => {
+    setLoadingUpload(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
       const res = await FetchData(ENDPOINTS.UPLOAD_CV, "POST", formData);
       setDataJSON(res.result);
+      setDataJSONDetail(null);
       messageApi.success("Upload file berhasil");
       const url = URL.createObjectURL(fileList[0].originFileObj);
       setUrlPDF(url);
       onSuccess();
+      setLoadingUpload(false);
     } catch (error) {
       console.log(error);
       onError();
@@ -80,6 +87,8 @@ export default function Dashboard() {
       } else {
         messageApi.error(error.response.data.message || "Upload failed");
       }
+    } finally {
+      setLoadingUpload(false);
     }
   };
 
@@ -113,10 +122,6 @@ export default function Dashboard() {
     onPreview: onPreview,
   };
 
-  const handleCopyClick = () => {
-    navigator.clipboard.writeText(dataJSON);
-    messageApi.success("Code copied to clipboard");
-  };
   return (
     <>
       {contextHolder}
@@ -167,10 +172,43 @@ export default function Dashboard() {
         </Col>
       </Row>
 
-      {/* <Row>{JSON.stringify(dataJSON)}</Row> */}
-      <Row gutter={16}>
-        <Col span={12}>
-          {urlPDF ? (
+      {loadingUpload ? (
+        <Skeleton active paragraph={{ rows: 10 }} />
+      ) : dataJSONDetail ? (
+        <Row gutter={16}>
+          <Col span={24}>
+            <div
+              style={{
+                maxHeight: "700px",
+                overflowY: "auto",
+              }}
+            >
+              <CopyBlock
+                text={JSON.stringify(dataJSONDetail, null, 10)}
+                language="json"
+                showLineNumbers={true}
+                wrapLines={true}
+                codeBlock
+                theme={github}
+                customStyle={{ fontSize: "14px" }}
+                icon={<CopyOutlined />}
+                onCopy={() => {
+                  navigator.clipboard.writeText(
+                    JSON.stringify(dataJSONDetail, null, 10)
+                  );
+                  message.success("Code copied to clipboard");
+                }}
+              />
+            </div>
+          </Col>
+        </Row>
+      ) : null}
+
+      {loadingUpload ? (
+        <Skeleton active paragraph={{ rows: 10 }} />
+      ) : urlPDF ? (
+        <Row gutter={16}>
+          <Col xs={24} md={24} lg={12} xl={12} style={{ marginTop: "20px" }}>
             <iframe
               title="PDF Viewer"
               src={urlPDF}
@@ -178,30 +216,31 @@ export default function Dashboard() {
               height="700px"
               style={{ border: "none" }}
             />
-          ) : null}
-        </Col>
-        <Col span={12}>
-          <div style={{ maxHeight: "700px", overflowY: "auto" }}>
-            <CopyBlock
-              height="700px"
-              text={JSON.stringify(dataJSON, null, 10)}
-              language="json"
-              showLineNumbers={true}
-              wrapLines={true}
-              codeBlock
-              theme={github}
-              customStyle={{ fontSize: "14px" }}
-              icon={<CopyOutlined />}
-              onCopy={() => {
-                navigator.clipboard.writeText(
-                  JSON.stringify(dataJSON, null, 10)
-                );
-                message.success("Code copied to clipboard");
-              }}
-            />
-          </div>
-        </Col>
-      </Row>
+          </Col>
+          <Col xs={24} md={24} lg={12} xl={12} style={{ marginTop: "20px" }}>
+            <div
+              style={{ maxHeight: "700px", width: "100%", overflowY: "auto" }}
+            >
+              <CopyBlock
+                text={JSON.stringify(dataJSON, null, 10)}
+                language="json"
+                showLineNumbers={true}
+                wrapLines={true}
+                codeBlock
+                theme={github}
+                customStyle={{ fontSize: "14px" }}
+                icon={<CopyOutlined />}
+                onCopy={() => {
+                  navigator.clipboard.writeText(
+                    JSON.stringify(dataJSON, null, 10)
+                  );
+                  message.success("Code copied to clipboard");
+                }}
+              />
+            </div>
+          </Col>
+        </Row>
+      ) : null}
     </>
   );
 }
