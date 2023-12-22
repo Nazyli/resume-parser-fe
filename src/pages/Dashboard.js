@@ -9,6 +9,7 @@ import {
   message,
   Carousel,
   Alert,
+  Skeleton,
 } from "antd";
 import {
   ClearOutlined,
@@ -18,6 +19,7 @@ import {
 import { blue, red } from "@ant-design/colors";
 import { useEffect, useState } from "react";
 import { ENDPOINTS, FetchData } from "../utils/endpoints";
+import { Link } from "react-router-dom";
 
 const listData = [
   { title: "Card 1", content: "Content of Card 1" },
@@ -37,6 +39,7 @@ export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const [fileList, setFileList] = useState([]);
   const [listData, setListData] = useState([]);
+  const [loadingFetchData, setLoadingFetchData] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataJSON, setDataJSON] = useState();
 
@@ -45,14 +48,14 @@ export default function Dashboard() {
   }, [dataJSON]);
 
   const fetchData = async () => {
-    setLoading(true);
+    setLoadingFetchData(true);
     try {
       const res = await FetchData(ENDPOINTS.GET_ALL_TRANS, "GET");
       setListData(res.result);
     } catch (error) {
       messageApi.error(error.response.data.message);
     } finally {
-      setLoading(false);
+      setLoadingFetchData(false);
     }
   };
 
@@ -123,25 +126,31 @@ export default function Dashboard() {
     <>
       {contextHolder}
       <div style={{ display: "flex", overflowX: "auto", padding: "8px" }}>
-        {listData.map((resume, index) => (
-          <Col key={index} span={5} style={{ padding: "10px" }}>
-            <Alert
-              message={
-                <a
-                  onClick={() => {
-                    fetchDetailData(resume.id);
-                  }}
-                >
-                  {resume.fileName}
-                </a>
-              }
-              type="info"
-            />
-          </Col>
-        ))}
+        {loadingFetchData
+          ? Array.from({ length: 10 }).map((_, index) => (
+              <Col key={index} span={5} style={{ padding: "10px" }}>
+                <Skeleton active />
+              </Col>
+            ))
+          : listData.map((resume, index) => (
+              <Col key={index} span={5} style={{ padding: "10px" }}>
+                <Alert
+                  message={
+                    <Link
+                      onClick={() => {
+                        fetchDetailData(resume.id);
+                      }}
+                    >
+                      {resume.fileName}
+                    </Link>
+                  }
+                  type="info"
+                />
+              </Col>
+            ))}
       </div>
 
-      <Row justify="center" style={{ marginTop: "30px" }}>
+      <Row justify="center" style={{ marginTop: "30px", marginBottom: "30px" }}>
         <Col>
           <Space direction="vertical" style={{ width: "400px" }}>
             <Upload {...propsUpload}>
@@ -162,6 +171,7 @@ export default function Dashboard() {
           </Space>
         </Col>
       </Row>
+
       <Row>{JSON.stringify(dataJSON)}</Row>
     </>
   );
