@@ -45,7 +45,7 @@ function LoginForm() {
           window.location.href = "/dashboard";
         });
     } catch (error) {
-      if (error.response.data.error[0]) {
+      if (error.response && error.response.data && error.response.data.error) {
         messageApi.error(error.response.data.error[0]);
       } else {
         messageApi.error(error.response.data.message);

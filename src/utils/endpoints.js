@@ -22,7 +22,7 @@ export async function FetchData(url, method, data = null) {
           data: {
             statusCode: 500,
             statusMessage: error.code,
-            errorList: [error.message],
+            error: [error.message],
           },
         },
         status: 500,
@@ -41,4 +41,5 @@ export const ENDPOINTS = {
   REGISTER: `${BASE_URL}/rest/auth/signup`,
   GET_USER_BY_ID: `${BASE_URL}/rest/users/me`,
   UPLOAD_CV: `${BASE_URL}/rest/resume/extract`,
+  GET_ALL_TRANS: `${BASE_URL}/rest/history/resume/find-all`,
 };
