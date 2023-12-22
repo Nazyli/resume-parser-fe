@@ -1,17 +1,65 @@
-import { Button, Card, Col, Row, Space, Upload, message } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  Space,
+  Upload,
+  List,
+  message,
+  Carousel,
+  Alert,
+} from "antd";
 import {
   ClearOutlined,
   UploadOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
 import { blue, red } from "@ant-design/colors";
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { ENDPOINTS, FetchData } from "../utils/endpoints";
 
+const listData = [
+  { title: "Card 1", content: "Content of Card 1" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+  { title: "Card 2", content: "Content of Card 2" },
+];
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const [fileList, setFileList] = useState([]);
+  const [listData, setListData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Fetch data from the API
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await FetchData(ENDPOINTS.GET_ALL_TRANS, "GET");
+      setListData(res.result);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.error) {
+        messageApi.error(error.response.data.error[0]);
+      } else {
+        messageApi.error(error.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -26,10 +74,10 @@ export default function Dashboard() {
       onSuccess();
     } catch (error) {
       onError();
-      if (error.response.data.error) {
+      if (error.response && error.response.data && error.response.data.error) {
         messageApi.error(error.response.data.error[0]);
       } else {
-        messageApi.error(error.response.data.message);
+        messageApi.error(error.message || "Upload failed");
       }
     }
   };
@@ -63,11 +111,20 @@ export default function Dashboard() {
     },
     onPreview: onPreview,
   };
+
   return (
     <>
       {contextHolder}
-      <Row justify="center">
-        <Col span={8}>
+      <div style={{ display: "flex", overflowX: "auto", padding: "8px" }}>
+        {listData.map((resume, index) => (
+          <Col key={index} span={5} style={{ padding: "10px" }}>
+            <Alert message={<a href={""}>{resume.fileName}</a>} type="info" />
+          </Col>
+        ))}
+      </div>
+
+      <Row justify="center" style={{ marginTop: "30px" }}>
+        <Col>
           <Space direction="vertical" style={{ width: "400px" }}>
             <Upload {...propsUpload}>
               <Button
