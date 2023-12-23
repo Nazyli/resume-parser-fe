@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [dataJSON, setDataJSON] = useState();
   const [dataJSONDetail, setDataJSONDetail] = useState();
   const [urlPDF, setUrlPDF] = useState();
+  const user = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
     fetchData();
